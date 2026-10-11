@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Data Collection & Dossier System</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #eef2f7; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 950px; margin: auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
+        p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; }
+        fieldset { border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 25px; background: #fafafa; }
+        legend { font-weight: bold; color: #2980b9; padding: 0 10px; font-size: 16px; background: #fff; border: 1px solid #ddd; border-radius: 4px; }
+        .grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group.full-width { grid-column: span 2; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 13px; color: #444; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        textarea { resize: vertical; height: 90px; }
+        .preview-container { margin-top: 10px; display: flex; align-items: center; gap: 15px; }
+        #imagePreview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #2980b9; display: none; }
+        .export-btn { background: #27ae60; color: white; border: none; padding: 15px 20px; font-size: 18px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.3s; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
+        .export-btn:hover { background: #219653; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Advanced Individual Dossier System</h1>
+    <p class="subtitle">Complete Life Details, Assets, Sources, Image & Background Collection</p>
+    
+    <form id="dossierForm">
+        <!-- Section 1: Personal Identification & Picture -->
+        <fieldset>
+            <legend>1. Personal Identification & Photo</legend>
+            <div class="grid-row">
+                <div class="form-group full-width">
+                    <label>Upload Individual Picture:</label>
+                    <input type="file" id="profileImage" accept="image/*" onchange="previewFile()">
+                    <div class="preview-container">
+                        <img id="imagePreview" alt="Profile Preview">
+                        <span id="fileNameText" style="font-size: 13px; color: #666;">No image selected</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Full Name:</label>
+                    <input type="text" id="fullName" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Alias / Nicknames:</label>
+                    <input type="text" id="alias" placeholder="Any alternative names">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth / Age:</label>
+                    <input type="date" id="dob">
+                </div>
+                <div class="form-group">
+                    <label>Current Residential Address:</label>
+                    <input type="text" id="address" placeholder="City, Country, Details">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Section 2: Assets & Possessions -->
+        <fieldset>
+            <legend>2. Assets & Possessions (Cars, Properties, etc.)</legend>
+            <div class="form-group full-width">
+                <label>Vehicles Owned (Cars, Bikes - Make, Model, Plate/Details):</label>
+                <textarea id="vehicles" placeholder="e.g., 1. Toyota Corolla 2023 (ABC-123)&#10;2. Honda Civic 2021"></textarea>
+            </div>
+            <div class="form-group full-width">
+                <label>Real Estate / Properties (Plots, Houses, Commercial):</label>
+                <textarea id="properties" placeholder="Details of land, houses, offices owned or rented..."></textarea>
+            </div>
+            <div class="form-group full-width">
+                <label>Financial Assets & Businesses:</label>
+                <textarea id="finances" placeholder="Bank accounts, companies owned, shares, investments..."></textarea>
+            </div>
+        </fieldset>
+
+        <!-- Section 3: Sources & Background History -->
+        <fieldset>
+            <legend>3. Sources & Comprehensive Life History</legend>
+            <div class="form-group full-width">
+                <label>Information Sources (Where did this data come from?):</label>
+                <input type="text" id="sources" placeholder="Public records, interviews, social media footprints, confidential sources...">
+            </div>
+            <div class="form-group full-width">
+                <label>Complete Life History, Career & Background Details:</label>
+                <textarea id="lifeHistory" style="height: 150px;" placeholder="Write everything else: education, career path, associations, lifestyle habits, family background, relationships, etc."></textarea>
+            </div>
+        </fieldset>
+
+        <!-- Final Export Button -->
+        <button type="button" class="export-btn" onclick="exportDossierReport()">📥 Export Complete Dossier Report (With Image)</button>
+    </form>
+</div>
+
+<script>
+    let base64Image = "";
+
+    function previewFile() {
+        const fileInput = document.getElementById('profileImage');
+        const preview = document.getElementById('imagePreview');
+        const fileNameText = document.getElementById('fileNameText');
+        const file = fileInput.files[0];
+
+        if (file) {
+            fileNameText.innerText = file.name;
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                base64Image = reader.result; // Convert image to string code so it can be saved in export
+                preview.src = base64Image;
+                preview.style.display = "block";
+            }
+            reader.readAsDataURL(file);
+        } else {
+            fileNameText.innerText = "No image selected";
+            preview.style.display = "none";
+            base64Image = "";
+        }
+    }
+
+    function exportDossierReport() {
+        const fullName = document.getElementById('fullName').value.trim();
+        if(!fullName) {
+            alert("Error: Please enter at least the individual's Full Name before exporting!");
+            document.getElementById('fullName').focus();
+            return;
+        }
+
+        // Collecting all form data + image into a structured report object
+        const dossierData = {
+            reportTitle: "Individual Comprehensive Dossier Report",
+            exportTimestamp: new Date().toLocaleString(),
+            personalInfo: {
+                fullName: fullName,
+                alias: document.getElementById('alias').value,
+                dob: document.getElementById('dob').value,
+                address: document.getElementById('address').value,
+                profilePicture: base64Image // Image data integrated into export
+            },
+            assets: {
+                vehicles: document.getElementById('vehicles').value,
+                properties: document.getElementById('properties').value,
+                finances: document.getElementById('finances').value
+            },
+            backgroundAndSources: {
+                sources: document.getElementById('sources').value,
+                lifeHistory: document.getElementById('lifeHistory').value
+            }
+        };
+
+        // Converting data to a file and triggering download
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dossierData, null, 4));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `${fullName.replace(/\s+/g, '_')}_Dossier_Report.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+</script>
+
+</body>
+</html>
